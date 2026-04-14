@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+
 import 'package:projecttt/core/const/app_color.dart';
 
 class SplashView extends StatelessWidget { 

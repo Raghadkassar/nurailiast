@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:projecttt/core/const/app_color.dart';
 import 'package:projecttt/fetcher/bmi_page/view/bmi_fit.dart';
-import 'package:projecttt/fetcher/cart/view/cart_view.dart';
+
 import 'package:projecttt/fetcher/home/view/home_view.dart';
 import 'package:projecttt/fetcher/oreder/view/order_view.dart';
 
@@ -20,7 +20,7 @@ class _RootState extends State<Root> {
 
   @override
   void initState() {
-    _screens = [HomeView(), CartView(), OrderView(), BmiFit()];
+    _screens = [BmiFit(), HomeView(), OrderView(), BmiFit()];
     pageController = PageController(initialPage: currentIndex);
     super.initState();
   }
@@ -62,14 +62,14 @@ class _RootState extends State<Root> {
             );
           },
           items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
             BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_cart),
-              label: 'Cart',
+              icon: Icon(Icons.star_rate_outlined),
+              label: 'BMi',
             ),
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'home'),
             BottomNavigationBarItem(
-              icon: Icon(Icons.payment),
-              label: 'Order History',
+              icon: Icon(Icons.medical_information),
+              label: 'information',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.person_2_outlined),

@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:projecttt/core/const/app_color.dart';
+import 'package:projecttt/fetcher/auth/view/sinup_view.dart';
+import 'package:projecttt/fetcher/input_mni/view/input_bmi_view.dart';
+
+import 'package:projecttt/sherd/custom_button.dart';
+import 'package:projecttt/sherd/custom_text.dart';
+import 'package:projecttt/sherd/custom_text_field.dart';
 
 class LoginView extends StatelessWidget {
-  const LoginView({super.key});
+  LoginView({super.key});
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -12,87 +20,47 @@ class LoginView extends StatelessWidget {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
-        
         backgroundColor: AppColor.color1,
         body: Center(
-          
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Gap(100),
-                //  Image.asset(assets/imges/food.jpg),
-                Gap(18),
-                Text(
-                  'food app',
-                  style: TextStyle(
-                    fontSize: 40,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
+                CustomTxtfield(
+                  hint: "email",
+                  isPassword: false,
+                  controller: emailController,
                 ),
-                Text(
-                  'welcom Back',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w500,
-                  ),
+                Gap(25),
+                CustomTxtfield(
+                  hint: "password",
+                  isPassword: true,
+                  controller: passwordController,
                 ),
-                Gap(70),
-                TextFormField(
-                  cursorColor: Colors.black,
-                  validator: (v) {
-                    if (v == null) {
-                      return 'please filt';
-                    }
-                  },
-                  // obscureText: true,
-                  decoration: InputDecoration(
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white),
-                    ),
-                    hintText: 'Email Address',
-
-                    fillColor: Colors.white,
-                    filled: true,
+                Gap(25),
+                InkWell(
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => InputBmiView()),
                   ),
+                  child: CustomButton(text: "Log In "),
                 ),
-                Gap(40),
-
-                TextFormField(
-                  cursorColor: Colors.black,
-                  validator: (v) {
-                    if (v == null) {
-                      return 'please filt';
-                    }
-                  },
-
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white),
+                Gap(25),
+                Row(
+                  children: [
+                    CustomText(text: "ndrjvknerov"),
+                    Gap(20),
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => SingupView()),
+                        );
+                      },
+                      child: CustomButton(text: "Sign In "),
                     ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white),
-                    ),
-                    hintText: 'password',
-
-                    fillColor: Colors.white,
-                    filled: true,
-                  ),
-                ),
-                Gap(40),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                  ),
-                  onPressed: () {},
-                  child: Text("Login", style: TextStyle(fontSize: 18)),
+                  ],
                 ),
               ],
             ),

@@ -14,7 +14,9 @@ class SplashView extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
         
-          Image.asset('assets/logo/food.jpg'),
+          // Image.asset('assets/image/logo.png'),
+          Image.asset('assets/image/logo2.png'),
+         
       ],),
     );
   }

@@ -44,13 +44,16 @@ class LoginView extends StatelessWidget {
                     context,
                     MaterialPageRoute(builder: (context) => InputBmiView()),
                   ),
-                  child: CustomButton(text: "Log In "),
+                  child:
+                 
+                   CustomButton(text: "Log In ",color:AppColor.color2),
+                  
                 ),
                 Gap(25),
                 Row(
                   children: [
-                    CustomText(text: "ndrjvknerov"),
-                    Gap(20),
+                    CustomText(text: "If you don't have an account, click here",),
+                    Gap(25),
                     InkWell(
                       onTap: () {
                         Navigator.push(
@@ -58,6 +61,7 @@ class LoginView extends StatelessWidget {
                           MaterialPageRoute(builder: (context) => SingupView()),
                         );
                       },
+                      
                       child: CustomButton(text: "Sign In "),
                     ),
                   ],

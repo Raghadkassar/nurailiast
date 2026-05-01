@@ -16,7 +16,7 @@ class _RootState extends State<Root> {
   late PageController pageController;
 
   late List<Widget> _screens;
-  int currentIndex = 0;
+  int currentIndex = 1;
 
   @override
   void initState() {

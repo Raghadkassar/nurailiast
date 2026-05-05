@@ -6,7 +6,7 @@ import 'package:projecttt/fetcher/home/view/home_view.dart';
 import 'package:projecttt/fetcher/oreder/view/order_view.dart';
 
 class Root extends StatefulWidget {
-  Root({super.key});
+  const Root({super.key});
 
   @override
   State<Root> createState() => _RootState();
@@ -33,7 +33,6 @@ class _RootState extends State<Root> {
         controller: pageController,
         children: _screens,
       ),
-
       bottomNavigationBar: Container(
         padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
@@ -49,7 +48,6 @@ class _RootState extends State<Root> {
           elevation: 0,
           backgroundColor: Colors.transparent,
           selectedItemColor: Colors.white,
-
           currentIndex: currentIndex,
           onTap: (index) {
             setState(() {

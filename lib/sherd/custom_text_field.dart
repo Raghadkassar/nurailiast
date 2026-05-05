@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'; // ضروري جداً لعمليات الفلترة
+import 'package:flutter/services.dart';
 
 class CustomTxtfield extends StatefulWidget {
   const CustomTxtfield({
@@ -9,12 +9,18 @@ class CustomTxtfield extends StatefulWidget {
     required this.isPassword,
     required this.controller,
     this.keyboardType,
+    this.prefixIcon,
+    this.textInputAction,
+    this.validator,
   });
 
   final String hint;
   final bool isPassword;
   final TextEditingController controller;
   final TextInputType? keyboardType;
+  final IconData? prefixIcon;
+  final TextInputAction? textInputAction;
+  final String? Function(String?)? validator;
 
   @override
   State<CustomTxtfield> createState() => _CustomTxtfieldState();
@@ -25,8 +31,8 @@ class _CustomTxtfieldState extends State<CustomTxtfield> {
 
   @override
   void initState() {
-    _obscureText = widget.isPassword;
     super.initState();
+    _obscureText = widget.isPassword;
   }
 
   void _togglePassword() {
@@ -37,79 +43,95 @@ class _CustomTxtfieldState extends State<CustomTxtfield> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 65,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: TextFormField(
-          cursorHeight: 20,
-          style: const TextStyle(fontSize: 14, color: Colors.black),
-          controller: widget.controller,
-          cursorColor: Colors.black,
-
-          // 1. منع ترك الحقل فارغاً (يظهر الرسالة تحت الحقل)
-          validator: (v) {
-            if (v == null || v.isEmpty) {
-              return 'يجب ملئ حقل ${widget.hint}';
-            }
-            return null;
-          },
-
-          obscureText: _obscureText,
-          keyboardType: widget.keyboardType,
-
-          // 2. الفلترة الصارمة (أرقام فقط أو أحرف فقط)
-          inputFormatters: [
-            if (widget.keyboardType == TextInputType.number ||
-                widget.keyboardType ==
-                    const TextInputType.numberWithOptions(decimal: true))
-              FilteringTextInputFormatter.allow(
-                RegExp(r'[0-9.]'),
-              ) // يسمح فقط بالأرقام والنقطة
-            else if (widget.keyboardType == TextInputType.name ||
-                widget.keyboardType == TextInputType.text)
-              FilteringTextInputFormatter.allow(
-                RegExp(r'[a-zA-Zء-ي ]'),
-              ), // يسمح فقط بالأحرف العربية والإنجليزية والمسافات
-          ],
-
-          decoration: InputDecoration(
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 10,
-              vertical: 14,
-            ),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-            suffixIcon: widget.isPassword
-                ? GestureDetector(
-                    onTap: _togglePassword,
-                    child: Icon(
-                      _obscureText
-                          ? CupertinoIcons.eye_slash
-                          : CupertinoIcons.eye,
-                      color: Colors.black,
-                      size: 19,
-                    ),
-                  )
-                : null,
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Colors.grey, width: 0.4),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(color: Colors.grey, width: 0.7),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Colors.red),
-            ),
-            hintText: widget.hint,
-            hintStyle: const TextStyle(color: Colors.grey),
-            fillColor: Colors.white,
-            filled: true,
-          ),
+    return TextFormField(
+      controller: widget.controller,
+      cursorColor: Colors.black,
+      cursorHeight: 20,
+      obscureText: _obscureText,
+      keyboardType: widget.keyboardType,
+      textInputAction: widget.textInputAction,
+      style: const TextStyle(fontSize: 14, color: Colors.black),
+      validator: widget.validator ?? _requiredValidator,
+      inputFormatters: _inputFormatters,
+      decoration: InputDecoration(
+        prefixIcon: widget.prefixIcon == null
+            ? null
+            : Icon(widget.prefixIcon, color: Colors.grey.shade700, size: 20),
+        suffixIcon: widget.isPassword
+            ? IconButton(
+                onPressed: _togglePassword,
+                icon: Icon(
+                  _obscureText ? CupertinoIcons.eye_slash : CupertinoIcons.eye,
+                  color: Colors.black,
+                  size: 19,
+                ),
+              )
+            : null,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 16,
         ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide(color: Colors.grey.shade300, width: 0.8),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(color: Colors.black54, width: 1),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(color: Colors.red),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(color: Colors.red, width: 1),
+        ),
+        hintText: widget.hint,
+        hintStyle: TextStyle(color: Colors.grey.shade500),
+        fillColor: Colors.white,
+        filled: true,
       ),
     );
+  }
+
+  String? _requiredValidator(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'This field is required';
+    }
+    return null;
+  }
+
+  List<TextInputFormatter> get _inputFormatters {
+    final type = widget.keyboardType;
+    final isDecimalNumber =
+        type == const TextInputType.numberWithOptions(decimal: true);
+
+    if (type == TextInputType.number || isDecimalNumber) {
+      return [
+        FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]')),
+        TextInputFormatter.withFunction((oldValue, newValue) {
+          final text = newValue.text.replaceAll(',', '.');
+
+          if ('.'.allMatches(text).length > 1) {
+            return oldValue;
+          }
+
+          return newValue.copyWith(
+            text: text,
+            selection: TextSelection.collapsed(offset: text.length),
+          );
+        }),
+      ];
+    }
+
+    if (type == TextInputType.name || type == TextInputType.text) {
+      return [
+        FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\u0600-\u06FF ]')),
+      ];
+    }
+
+    return const [];
   }
 }

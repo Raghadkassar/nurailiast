@@ -5,10 +5,20 @@ import 'package:projecttt/fetcher/bmi_page/recipes_healthy/rec.dart';
 import 'package:projecttt/fetcher/bmi_page/view/bmi_mod.dart';
 
 class HomeView extends StatefulWidget {
-  const HomeView({super.key, this.bmiResult, this.bmiDiagnosis});
+  const HomeView({
+    super.key,
+    this.bmiResult,
+    this.bmiDiagnosis,
+    this.height,
+    this.currentWeight,
+    this.targetWeight,
+  });
 
   final double? bmiResult;
   final String? bmiDiagnosis;
+  final double? height;
+  final double? currentWeight;
+  final double? targetWeight;
 
   @override
   State<HomeView> createState() => _HomeViewState();
@@ -106,7 +116,11 @@ class _HomeViewState extends State<HomeView> {
                       icon: Icons.monitor_weight_outlined,
                       colors: const [Color(0xFFE7D7F5), Color(0xFFC9A8E8)],
                       accentColor: const Color(0xFF73559A),
-                      page: cont_wheigt(),
+                      page: cont_wheigt(
+                        height: widget.height,
+                        currentWeight: widget.currentWeight,
+                        targetWeight: widget.targetWeight,
+                      ),
                     ),
                     _buildServiceCard(
                       index: 2,
@@ -115,7 +129,12 @@ class _HomeViewState extends State<HomeView> {
                       icon: Icons.spa_outlined,
                       colors: const [Color(0xFFD8EFE4), Color(0xFF9CCFB7)],
                       accentColor: const Color(0xFF3D7A60),
-                      page: cons_wheigt(),
+                      page: cons_wheigt(
+                        bmiResult: widget.bmiResult,
+                        bmiDiagnosis: widget.bmiDiagnosis,
+                        currentWeight: widget.currentWeight,
+                        targetWeight: widget.targetWeight,
+                      ),
                     ),
                     _buildServiceCard(
                       index: 3,

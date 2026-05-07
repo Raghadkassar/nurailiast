@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:projecttt/core/const/app_color.dart';
-import 'package:projecttt/fetcher/home/view/home_view.dart';
+import 'package:projecttt/root.dart';
 import 'package:projecttt/sherd/custom_button.dart';
 import 'package:projecttt/sherd/custom_text_field.dart';
 
@@ -281,24 +281,27 @@ class _InputBmiViewState extends State<InputBmiView> {
       return;
     }
 
-    final bmiResult = _calculateBmi();
+    final height = _parseNumber(_heightController.text);
+    final weight = _parseNumber(_weightController.text);
+    final targetWeight = _parseNumber(_targetWeightController.text);
+    final bmiResult = _calculateBmi(height, weight);
     final bmiDiagnosis = _bmiDiagnosis(bmiResult);
 
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) => HomeView(
+        builder: (context) => Root(
           bmiResult: bmiResult,
           bmiDiagnosis: bmiDiagnosis,
+          height: height,
+          currentWeight: weight,
+          targetWeight: targetWeight,
         ),
       ),
     );
   }
 
-  double _calculateBmi() {
-    final height = _parseNumber(_heightController.text);
-    final weight = _parseNumber(_weightController.text);
-
+  double _calculateBmi(double height, double weight) {
     return weight / (height * height);
   }
 

@@ -2,7 +2,16 @@ import 'package:flutter/material.dart';
 
 // ignore: camel_case_types
 class cont_wheigt extends StatelessWidget {
-  const cont_wheigt({super.key});
+  const cont_wheigt({
+    super.key,
+    required this.height,
+    required this.currentWeight,
+    required this.targetWeight,
+  });
+
+  final double? height;
+  final double? currentWeight;
+  final double? targetWeight;
 
   static const Color _backgroundTop = Color(0xFFFFEEF5);
   static const Color _backgroundBottom = Color(0xFFFFFAF3);
@@ -14,17 +23,23 @@ class cont_wheigt extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const double height = 1.65;
-    const double weightBefore = 85.0;
-    const double weightNow = 78.0;
-    const double weightTarget = 70.0;
+    final double weightBefore = currentWeight ?? 0;
+    final double weightNow = currentWeight ?? 0;
+    final double weightTarget = targetWeight ?? weightNow;
 
-    final double bmiBefore = weightBefore / (height * height);
-    final double bmiNow = weightNow / (height * height);
-    final double lostWeight = weightBefore - weightNow;
-    final double totalGoal = weightBefore - weightTarget;
-    final double remainingWeight = weightNow - weightTarget;
-    final double progress = (lostWeight / totalGoal).clamp(0.0, 1.0).toDouble();
+    final double bmiBefore = _calculateBmi(weightBefore);
+    final double bmiNow = _calculateBmi(weightNow);
+    final double lostWeight = _calculateMovedWeight(
+      weightBefore,
+      weightNow,
+      weightTarget,
+    );
+    final double totalGoal = (weightBefore - weightTarget).abs();
+    final double remainingWeight = (weightNow - weightTarget).abs();
+    final double progress = _calculateProgress(
+      lostWeight: lostWeight,
+      totalGoal: totalGoal,
+    );
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -66,7 +81,7 @@ class cont_wheigt extends StatelessWidget {
                         Icons.auto_awesome_outlined,
                       ),
                       const SizedBox(height: 14),
-                      _buildHistoryTimeline(),
+                      _buildHistoryTimeline(weightNow),
                     ],
                   ),
                 ),
@@ -486,11 +501,13 @@ class cont_wheigt extends StatelessWidget {
     );
   }
 
-  Widget _buildHistoryTimeline() {
+  Widget _buildHistoryTimeline(double currentWeight) {
     final items = [
-      _HistoryItem('خسارة 0.5 كجم', '12 مايو 2026', '78.0'),
-      _HistoryItem('ثبات ممتاز', '10 مايو 2026', '78.5'),
-      _HistoryItem('اقتراب من الهدف', '8 مايو 2026', '79.0'),
+      _HistoryItem(
+        'الوزن الحالي',
+        'من بيانات الإدخال',
+        currentWeight.toStringAsFixed(1),
+      ),
     ];
 
     return Container(
@@ -619,6 +636,37 @@ class cont_wheigt extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  double _calculateBmi(double weight) {
+    final inputHeight = height;
+    if (inputHeight == null || inputHeight <= 0) {
+      return 0;
+    }
+
+    return weight / (inputHeight * inputHeight);
+  }
+
+  double _calculateMovedWeight(
+    double start,
+    double current,
+    double target,
+  ) {
+    final total = (start - target).abs();
+    final remaining = (current - target).abs();
+
+    return (total - remaining).clamp(0.0, total).toDouble();
+  }
+
+  double _calculateProgress({
+    required double lostWeight,
+    required double totalGoal,
+  }) {
+    if (totalGoal == 0) {
+      return 1;
+    }
+
+    return (lostWeight / totalGoal).clamp(0.0, 1.0).toDouble();
   }
 
   String _getBMIMessage(double bmi) {

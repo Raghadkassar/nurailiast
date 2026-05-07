@@ -6,32 +6,57 @@ import 'package:projecttt/fetcher/home/view/home_view.dart';
 import 'package:projecttt/fetcher/oreder/view/order_view.dart';
 
 class Root extends StatefulWidget {
-  const Root({super.key});
+  const Root({
+    super.key,
+    this.bmiResult,
+    this.bmiDiagnosis,
+    this.height,
+    this.currentWeight,
+    this.targetWeight,
+  });
+
+  final double? bmiResult;
+  final String? bmiDiagnosis;
+  final double? height;
+  final double? currentWeight;
+  final double? targetWeight;
 
   @override
   State<Root> createState() => _RootState();
 }
 
 class _RootState extends State<Root> {
-  late PageController pageController;
-
   late List<Widget> _screens;
+  late List<GlobalKey<NavigatorState>> _navigatorKeys;
   int currentIndex = 1;
 
   @override
   void initState() {
-    _screens = [BmiFit(), HomeView(), OrderView(), BmiFit()];
-    pageController = PageController(initialPage: currentIndex);
     super.initState();
+    _screens = [
+      BmiFit(),
+      HomeView(
+        bmiResult: widget.bmiResult,
+        bmiDiagnosis: widget.bmiDiagnosis,
+        height: widget.height,
+        currentWeight: widget.currentWeight,
+        targetWeight: widget.targetWeight,
+      ),
+      OrderView(),
+      BmiFit(),
+    ];
+    _navigatorKeys = List.generate(
+      _screens.length,
+      (_) => GlobalKey<NavigatorState>(),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: PageView(
-        physics: NeverScrollableScrollPhysics(),
-        controller: pageController,
-        children: _screens,
+      body: IndexedStack(
+        index: currentIndex,
+        children: List.generate(_screens.length, _buildTabNavigator),
       ),
       bottomNavigationBar: Container(
         padding: EdgeInsets.all(10),
@@ -50,14 +75,16 @@ class _RootState extends State<Root> {
           selectedItemColor: Colors.white,
           currentIndex: currentIndex,
           onTap: (index) {
+            if (index == currentIndex) {
+              _navigatorKeys[index].currentState?.popUntil(
+                    (route) => route.isFirst,
+                  );
+              return;
+            }
+
             setState(() {
               currentIndex = index;
             });
-            pageController.animateToPage(
-              index,
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-            );
           },
           items: const [
             BottomNavigationBarItem(
@@ -76,6 +103,17 @@ class _RootState extends State<Root> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildTabNavigator(int index) {
+    return Navigator(
+      key: _navigatorKeys[index],
+      onGenerateRoute: (_) {
+        return MaterialPageRoute(
+          builder: (context) => _screens[index],
+        );
+      },
     );
   }
 }
